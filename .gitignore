@@ -1,7 +1,4 @@
 node_modules
-.eslintignore
 .eslintrc.js
-.prettierignore
 .prettierrc
 .cache
-public
