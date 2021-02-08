@@ -26,7 +26,7 @@ export function Login() {
                         onChange={(e) => setName(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && name !== "" && onClick()}
                     />
-                    <button disabled={name === ""} onClick={onClick}>
+                    <button className="button" disabled={name === ""} onClick={onClick}>
                         Submit!
                     </button>
                 </div>

@@ -1,9 +1,8 @@
 $border: 1px solid black;
 
 .toolbox {
-    border-bottom: $border;
     padding: 10px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 button:nth-child(odd) {

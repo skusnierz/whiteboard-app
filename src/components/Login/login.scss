@@ -33,20 +33,23 @@ input {
 }
 
 input:focus,
-button:focus {
+.button:focus {
     border-color: $input_focus_border_color;
     outline: none;
 }
 
-button {
+.button {
     background-color: $background_color;
     display: block;
-    margin-left: 20px;
+    width: auto;
+    height: auto;
+    margin-left: 20px !important;
+    border: 1px solid;
     padding: 7px;
     border-radius: 8px;
 }
 
-button:disabled {
+.button:disabled {
     background-color: #cccccc;
     color: #666666;
 }
