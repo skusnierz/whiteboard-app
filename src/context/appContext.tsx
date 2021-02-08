@@ -19,7 +19,10 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             sessionStorage.setItem("APP_CONTEXT", JSON.stringify({ ...state, name: action.name }));
             return { ...state, name: action.name };
         case "SET_COLOR":
-            sessionStorage.setItem("APP_CONTEXT", JSON.stringify({ ...state, color: action.color }));
+            sessionStorage.setItem(
+                "APP_CONTEXT",
+                JSON.stringify({ ...state, color: action.color })
+            );
             return { ...state, color: action.color };
         default:
             return state;
