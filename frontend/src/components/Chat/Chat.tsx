@@ -16,7 +16,6 @@ export function Chat() {
     const test = useRef() as MutableRefObject<HTMLLIElement>;
 
     useEffect(() => {
-        console.log("kurwa");
         test?.current?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
     }, [messages]);
 
@@ -37,7 +36,7 @@ export function Chat() {
             <ul>
                 {messages.map((message, idx: number) =>
                     idx !== messages.length ? (
-                        <li ref={test}>
+                        <li ref={test} key={idx}>
                             <p>
                                 {message.author} <Moment date={message.date} format="HH:mm:ss" />
                             </p>
