@@ -18,7 +18,6 @@ type actionType =
 type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
 
 const reducer = (state: AppStateInterface, action: actionType) => {
-    console.log(state);
     switch (action.type) {
         case "SET_NAME":
             sessionStorage.setItem(

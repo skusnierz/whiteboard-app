@@ -18,7 +18,7 @@ const colorers: string[] = [
 ];
 
 export function Toolbox() {
-    const [,dispatch] = useContext(Context);
+    const [, dispatch] = useContext(Context);
     return (
         <div className="toolbox">
             {colorers.map((color: string) => (
