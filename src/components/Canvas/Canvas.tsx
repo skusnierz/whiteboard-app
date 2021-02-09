@@ -3,18 +3,16 @@ import { Context } from "../../context/appContext";
 import "./canvas.scss";
 
 export function Canvas() {
-    const [{ color, pointerSize }] = useContext(Context);
+    const [{ color, pointerSize, canvasRef, contextRef }] = useContext(Context);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
     const divRef = useRef() as MutableRefObject<HTMLDivElement>;
-    const canvasRef = useRef() as MutableRefObject<HTMLCanvasElement>;
-    const contextRef = useRef() as MutableRefObject<CanvasRenderingContext2D>;
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        canvas.width = divRef.current.offsetWidth;
+        canvas.width = divRef.current.offsetWidth - 2;
         canvas.height = divRef.current.offsetHeight;
 
-        canvas.style.width = `${divRef.current.offsetWidth}px`;
+        canvas.style.width = `${divRef.current.offsetWidth - 2}px`;
         canvas.style.height = `${divRef.current.offsetHeight}px`;
 
         const context = canvas.getContext("2d");
@@ -24,32 +22,28 @@ export function Canvas() {
             context.lineWidth = pointerSize;
             contextRef.current = context;
         }
-    }, [pointerSize, color]);
+    }, [pointerSize, color, canvasRef, contextRef]);
 
     const startDrawing = ({ nativeEvent }: { nativeEvent: any }) => {
-        console.log("start");
         const { offsetX, offsetY } = nativeEvent;
-        console.log(nativeEvent);
         contextRef.current.beginPath();
         contextRef.current.moveTo(offsetX, offsetY);
         setIsDrawing(true);
     };
 
-    const startTouch = ({nativeEvent}: {nativeEvent: TouchEvent}) => {
+    const startTouch = ({ nativeEvent }: { nativeEvent: TouchEvent }) => {
         const { pageX, pageY } = nativeEvent.touches[0];
         contextRef.current.beginPath();
-        contextRef.current.moveTo(pageX-80, pageY);
+        contextRef.current.moveTo(pageX - 80, pageY);
         setIsDrawing(true);
-    }
+    };
 
     const finishDrawing = () => {
-        console.log("end");
         contextRef.current.closePath();
         setIsDrawing(false);
     };
 
     const draw = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
-        console.log("move");
         document.body.style.cursor = "pointer";
         if (isDrawing) {
             const { offsetX, offsetY } = nativeEvent;
@@ -58,13 +52,13 @@ export function Canvas() {
         }
     };
 
-    const touch = ({nativeEvent}: {nativeEvent: TouchEvent})  => {
+    const touch = ({ nativeEvent }: { nativeEvent: TouchEvent }) => {
         if (isDrawing) {
             const { pageX, pageY } = nativeEvent.touches[0];
-            contextRef.current.lineTo(pageX-80, pageY);
+            contextRef.current.lineTo(pageX - 80, pageY);
             contextRef.current.stroke();
         }
-    }
+    };
 
     return (
         <div className="canvas" ref={divRef}>
@@ -76,7 +70,7 @@ export function Canvas() {
                 onTouchEnd={finishDrawing}
                 onTouchMove={touch}
                 ref={canvasRef}
-                style={{ cursor: 'display: none' }}
+                style={{ cursor: "display: none" }}
             />
         </div>
     );

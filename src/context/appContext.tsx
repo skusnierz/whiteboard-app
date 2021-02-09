@@ -1,4 +1,4 @@
-import React, { ReactElement, useReducer } from "react";
+import React, { MutableRefObject, ReactElement, useReducer, useRef } from "react";
 
 interface UserContextProps {
     children: ReactElement;
@@ -8,12 +8,15 @@ interface AppStateInterface {
     name: string;
     color: string;
     pointerSize: number;
+    canvasRef: MutableRefObject<HTMLCanvasElement>;
+    contextRef: MutableRefObject<CanvasRenderingContext2D>;
 }
 
 type actionType =
     | { type: "SET_NAME"; name: string }
     | { type: "SET_COLOR"; color: string }
-    | { type: "SET_POINTER_SIZE"; pointerSize: number };
+    | { type: "SET_POINTER_SIZE"; pointerSize: number }
+    | { type: "CLEAR" };
 
 type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
 
@@ -33,6 +36,15 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             return { ...state, color: action.color };
         case "SET_POINTER_SIZE":
             return { ...state, pointerSize: action.pointerSize };
+        case "CLEAR":
+            const { canvasRef } = state;
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            if (context) {
+                context.fillStyle = "white";
+                context.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            return { ...state, canvasRef };
         default:
             return state;
     }
@@ -47,6 +59,8 @@ appInitialContext.pointerSize = 1;
 export const Context = React.createContext<AppContextInterface>([appInitialContext, () => null]);
 
 export default function AppContext({ children }: UserContextProps) {
+    appInitialContext.canvasRef = useRef() as MutableRefObject<HTMLCanvasElement>;
+    appInitialContext.contextRef = useRef() as MutableRefObject<CanvasRenderingContext2D>;
     const [context, dispatch] = useReducer(reducer, appInitialContext);
     return <Context.Provider value={[context, dispatch]}> {children} </Context.Provider>;
 }
