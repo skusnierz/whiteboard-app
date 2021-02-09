@@ -1,0 +1,57 @@
+.grid-container {
+    text-align: center;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 0.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        ". Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        ". Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        ". Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat"
+        ". Canvas Canvas Canvas Canvas Canvas Canvas Chat Chat";
+}
+
+.Toolbox {
+    grid-area: Toolbox;
+}
+
+.Canvas {
+    grid-area: Canvas;
+}
+
+.Chat {
+    position: relative;
+    grid-area: Chat;
+}
+
+@media (max-width: 800px) {
+    .Chat {
+        display: none;
+    }
+
+    .grid-container {
+        grid-template-areas:
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas";
+    }
+}

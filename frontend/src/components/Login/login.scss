@@ -1,0 +1,70 @@
+$background_color: #f2f2f2;
+$input_border_color: #e6e6e6;
+$input_focus_border_color: #999999;
+
+.container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #bdc3c7;
+    background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);
+    background: linear-gradient(to right, #2c3e50, #bdc3c7);
+}
+
+.paper {
+    text-align: center;
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+input {
+    padding: 4px 10px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 15px;
+    border-radius: 10px;
+    border-color: $input_border_color;
+    background-color: $background_color;
+}
+
+input:focus,
+.button:focus {
+    border-color: $input_focus_border_color;
+    outline: none;
+}
+
+.button {
+    background-color: $background_color;
+    display: block;
+    width: auto;
+    height: auto;
+    margin-left: 20px !important;
+    border: 1px solid;
+    padding: 7px;
+    border-radius: 8px;
+}
+
+.button:disabled {
+    background-color: #cccccc;
+    color: #666666;
+}
+
+.form {
+    position: sticky;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-top: 40px;
+}
+
+.inscription {
+    margin: 10px;
+    font-size: 15px;
+    height: 40px;
+}

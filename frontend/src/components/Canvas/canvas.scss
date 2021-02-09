@@ -1,0 +1,7 @@
+@use '../Toolbox/toolbox.scss' as toolbox;
+
+.canvas {
+    border-left: toolbox.$border;
+    border-right: toolbox.$border;
+    height: 100%;
+}
