@@ -7,32 +7,43 @@ interface UserContextProps {
 interface AppStateInterface {
     name: string;
     color: string;
+    pointerSize: number;
 }
 
-type actionType = { type: "SET_NAME"; name: string } | { type: "SET_COLOR"; color: string };
+type actionType =
+    | { type: "SET_NAME"; name: string }
+    | { type: "SET_COLOR"; color: string }
+    | { type: "SET_POINTER_SIZE"; pointerSize: number };
 
 type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
 
 const reducer = (state: AppStateInterface, action: actionType) => {
+    console.log(state);
     switch (action.type) {
         case "SET_NAME":
-            sessionStorage.setItem("APP_CONTEXT", JSON.stringify({ ...state, name: action.name }));
+            sessionStorage.setItem(
+                "APP_CONTEXT",
+                JSON.stringify({ name: action.name, color: state.color })
+            );
             return { ...state, name: action.name };
         case "SET_COLOR":
             sessionStorage.setItem(
                 "APP_CONTEXT",
-                JSON.stringify({ ...state, color: action.color })
+                JSON.stringify({ name: state.name, color: action.color })
             );
             return { ...state, color: action.color };
+        case "SET_POINTER_SIZE":
+            return { ...state, pointerSize: action.pointerSize };
         default:
             return state;
     }
 };
 
-const appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as string) || {
+let appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as string) || {
     name: "",
     color: ""
 };
+appInitialContext.pointerSize = 1;
 
 export const Context = React.createContext<AppContextInterface>([appInitialContext, () => null]);
 

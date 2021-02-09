@@ -28,3 +28,22 @@
 .Chat {
     grid-area: Chat;
 }
+
+@media (max-width: 800px) {
+    .Chat {
+        display: none;
+    }
+
+    .grid-container {
+        grid-template-areas:
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            "Toolbox Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas"
+            ". Canvas Canvas Canvas Canvas Canvas Canvas Canvas Canvas";
+    }
+}
