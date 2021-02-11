@@ -1,5 +1,8 @@
+import { Socket } from "dgram";
 import React, { MutableRefObject, ReactElement, useReducer, useRef } from "react";
+import { io } from "socket.io-client";
 
+const SERVER_URL = "http://192.168.0.97:8080";
 interface UserContextProps {
     children: ReactElement;
 }
@@ -10,6 +13,7 @@ interface AppStateInterface {
     pointerSize: number;
     canvasRef: MutableRefObject<HTMLCanvasElement>;
     contextRef: MutableRefObject<CanvasRenderingContext2D>;
+    socket: Socket;
 }
 
 type actionType =
@@ -55,6 +59,7 @@ let appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as stri
     color: ""
 };
 appInitialContext.pointerSize = 1;
+appInitialContext.socket = io(SERVER_URL);
 
 export const Context = React.createContext<AppContextInterface>([appInitialContext, () => null]);
 

@@ -2,22 +2,21 @@ import React, { MutableRefObject, useContext, useEffect, useRef, useState } from
 import { Context } from "../../context/appContext";
 import "./chat.scss";
 import Moment from "react-moment";
+import { Message } from "../WhiteBoard/WhiteBoard";
 
-const initialMessages = [
-    { author: "mietek", date: new Date(), message: "Elo siema jestem mietek" },
-    { author: "jacek", date: new Date(), message: "Elo siema jestem jacek" },
-    { author: "maciek", date: new Date(), message: "Elo siema jestem maciek" }
-];
+interface ChatProps {
+    messages: Message[];
+    setMessages: (messages: Message[]) => void;
+}
 
-export function Chat() {
-    const [{ name }] = useContext(Context);
-    const [messages, setMessages] = useState(initialMessages);
+export function Chat({ messages, setMessages }: ChatProps) {
+    const [{ name, socket }] = useContext(Context);
     const [message, setMessage] = useState<string>("");
     const test = useRef() as MutableRefObject<HTMLLIElement>;
 
     useEffect(() => {
         test?.current?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
-    }, [messages]);
+    }, [messages, setMessages]);
 
     const onClick = () => {
         setMessages([
@@ -28,6 +27,11 @@ export function Chat() {
                 message
             }
         ]);
+        socket.emit("newMessage", {
+            author: name,
+            date: new Date(),
+            message
+        });
         setMessage("");
     };
 
