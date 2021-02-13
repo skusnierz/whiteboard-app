@@ -1,0 +1,8 @@
+@use '../Login/login.scss';
+
+.buttons {
+    display: flex;
+    margin-left: 5%;
+    margin-right: 5%;
+    justify-content: space-between;
+}

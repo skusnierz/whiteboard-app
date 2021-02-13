@@ -1,4 +1,6 @@
 import { makeStyles, TextField } from "@material-ui/core";
+import React from "react";
+import { FieldError } from "react-hook-form";
 
 const useStyles = makeStyles({
     input: {
@@ -15,18 +17,23 @@ const useStyles = makeStyles({
 
 interface InputProps {
     label: string;
-    onChange: (value: string) => void;
+    name: string;
+    error: boolean;
+    errorMessage: (label: string) => string | undefined;
 }
 
-export function Input({ label, onChange }: InputProps) {
+export const Input = React.forwardRef(({ label, name, error, errorMessage }: InputProps, ref) => {
     const classes = useStyles();
 
     return (
         <TextField
-            id="outlined-basic"
+            error={error}
+            name={name}
+            helperText={errorMessage(label) || ""}
+            inputRef={ref}
             label={label}
+            type={label === "Password" ? "password" : ""}
             variant="outlined"
-            onChange={(e) => onChange(e.target.value)}
             className={classes.input}
             InputLabelProps={{
                 classes: {
@@ -40,4 +47,4 @@ export function Input({ label, onChange }: InputProps) {
             }}
         />
     );
-}
+});

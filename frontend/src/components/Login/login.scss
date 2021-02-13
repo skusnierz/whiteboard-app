@@ -19,25 +19,25 @@ $input_focus_border_color: #999999;
     font-family: "Courier New", Courier, monospace;
 }
 
-@media(max-width: 1400px) {
+@media (max-width: 1400px) {
     .paper {
         width: 50%;
     }
 }
 
-@media(max-width: 1200px) {
+@media (max-width: 1200px) {
     .paper {
         width: 60%;
     }
 }
 
-@media(max-width: 1000px) {
+@media (max-width: 1000px) {
     .paper {
         width: 70%;
     }
 }
 
-@media(max-width: 800px) {
+@media (max-width: 800px) {
     .paper {
         width: 90%;
     }

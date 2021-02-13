@@ -1,10 +1,11 @@
 import { Button, makeStyles, Paper, Link, Typography } from "@material-ui/core";
 import { Input } from "./Input";
 import LockIcon from "@material-ui/icons/Lock";
-import React, { useContext, useState } from "react";
+import React from "react";
 import "./login.scss";
 import { useHistory } from "react-router-dom";
-import { Context } from "../../context/appContext";
+import { useForm } from "react-hook-form";
+import { errorMessage } from "../../utils/errorMessage";
 
 const useStyles = makeStyles({
     container: {
@@ -17,7 +18,8 @@ const useStyles = makeStyles({
     header: {
         fontSize: "20px",
         textAlign: "center",
-        marginBottom: 10
+        marginBottom: 10,
+        fontWeight: 600
     },
 
     button: {
@@ -31,38 +33,67 @@ const useStyles = makeStyles({
         display: "block",
         float: "left",
         marginLeft: "5%",
-        marginBottom: 10
+        marginBottom: 10,
+        cursor: "pointer"
     }
 });
+
+interface FormData {
+    email: string;
+    password: string;
+}
 
 export function Login() {
     const classes = useStyles();
     const history = useHistory();
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [, dispatch] = useContext(Context);
-    const onClick = () => {
-        history.push("/white-board");
-        dispatch({ type: "SET_NAME", name: email });
-    };
+    const { register, errors, handleSubmit } = useForm<FormData>();
 
-    console.log(password);
-    console.log(email);
+    const signIn = ({ email, password }: FormData) => {
+        console.log(email);
+        console.log(password);
+    };
 
     return (
         <div className={classes.container}>
             <Paper className="paper" elevation={5}>
                 <div>
                     <Typography className={classes.header}>Sing In </Typography>
-                    <LockIcon color="primary"/>
+                    <LockIcon color="primary" />
                 </div>
-                <form className="form">
-                    <Input onChange={setEmail} label={"Email"} />
-                    <Input onChange={setPassword} label={"Password"} />
-                    <Button variant="contained" color="primary" className={classes.button}>
+                <form className="form" onSubmit={handleSubmit(signIn)}>
+                    <Input
+                        error={errors.email !== undefined}
+                        errorMessage={(label: string) => errorMessage(label, errors.email)}
+                        ref={register({
+                            required: true,
+                            pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i
+                        })}
+                        label={"Email"}
+                        name={"email"}
+                    />
+                    <Input
+                        error={errors.password !== undefined}
+                        errorMessage={(label: string) => errorMessage(label, errors.password)}
+                        ref={register({
+                            required: true,
+                            minLength: {
+                                value: 8,
+                                message: "Password must have at least 8 characters"
+                            }
+                        })}
+                        label={"Password"}
+                        name={"password"}
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}>
                         Sing In
                     </Button>
-                    <Link className={classes.link}>Don't have an account? Sign Up</Link>
+                    <Link className={classes.link} onClick={() => history.push("/register")}>
+                        Don't have an account? Sign Up
+                    </Link>
                 </form>
             </Paper>
         </div>
