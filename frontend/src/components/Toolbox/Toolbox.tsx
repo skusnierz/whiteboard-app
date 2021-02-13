@@ -37,7 +37,12 @@ export function Toolbox() {
                     <hr className={"hr" + pointerSize} />
                 </button>
             ))}
-            <button className="line" onClick={() => dispatch({ type: "CLEAR" })}>
+            <button
+                className="line"
+                onClick={() => {
+                    dispatch({ type: "CLEAR_CANVAS" });
+                    dispatch({ type: "CLEAR_LINES" });
+                }}>
                 Clear
             </button>
         </div>

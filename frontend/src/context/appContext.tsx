@@ -1,4 +1,5 @@
 import { Socket } from "dgram";
+import { stat } from "fs";
 import React, { MutableRefObject, ReactElement, useReducer, useRef } from "react";
 import { io } from "socket.io-client";
 
@@ -20,7 +21,8 @@ type actionType =
     | { type: "SET_NAME"; name: string }
     | { type: "SET_COLOR"; color: string }
     | { type: "SET_POINTER_SIZE"; pointerSize: number }
-    | { type: "CLEAR" };
+    | { type: "CLEAR_CANVAS" }
+    | { type: "CLEAR_LINES" };
 
 type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
 
@@ -40,7 +42,7 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             return { ...state, color: action.color };
         case "SET_POINTER_SIZE":
             return { ...state, pointerSize: action.pointerSize };
-        case "CLEAR":
+        case "CLEAR_CANVAS":
             const { canvasRef } = state;
             const canvas = canvasRef.current;
             const context = canvas.getContext("2d");
@@ -49,6 +51,9 @@ const reducer = (state: AppStateInterface, action: actionType) => {
                 context.fillRect(0, 0, canvas.width, canvas.height);
             }
             return { ...state, canvasRef };
+        case "CLEAR_LINES":
+            state.socket.emit("clearLines", state.name);
+            return state;
         default:
             return state;
     }
@@ -56,7 +61,7 @@ const reducer = (state: AppStateInterface, action: actionType) => {
 
 let appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as string) || {
     name: "",
-    color: ""
+    color: "black"
 };
 appInitialContext.pointerSize = 1;
 appInitialContext.socket = io(SERVER_URL);

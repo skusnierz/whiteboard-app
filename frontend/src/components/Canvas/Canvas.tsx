@@ -2,10 +2,41 @@ import React, { MutableRefObject, useContext, useEffect, useRef, useState } from
 import { Context } from "../../context/appContext";
 import "./canvas.scss";
 
+interface Position {
+    x: number;
+    y: number;
+}
+
+interface Line {
+    user: string;
+    startPosition: Position;
+    endPosition: Position;
+    pointerSize: number;
+    color: string;
+}
+
 export function Canvas() {
-    const [{ color, pointerSize, canvasRef, contextRef }] = useContext(Context);
+    const [{ color, pointerSize, canvasRef, contextRef, socket, name }, dispatch] = useContext(
+        Context
+    );
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
     const divRef = useRef() as MutableRefObject<HTMLDivElement>;
+    const [lines, setLines] = useState<Line[]>([]);
+    const [prevPosition, setPrevPosition] = useState<Position>({ x: 0, y: 0 });
+
+    const sendNewLine = (line: Line) => {
+        socket.emit("newLine", line);
+    };
+
+    const drawLine = (line: Line) => {
+        const { startPosition, endPosition, pointerSize, color } = line;
+        contextRef.current.strokeStyle = color;
+        contextRef.current.lineWidth = pointerSize;
+        contextRef.current.beginPath();
+        contextRef.current.moveTo(startPosition.x, startPosition.y);
+        contextRef.current.lineTo(endPosition.x, endPosition.y);
+        contextRef.current.stroke();
+    };
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -14,8 +45,22 @@ export function Canvas() {
 
         canvas.style.width = `${divRef.current.offsetWidth - 2}px`;
         canvas.style.height = `${divRef.current.offsetHeight}px`;
+    }, []);
 
-        const context = canvas.getContext("2d");
+    useEffect(() => {
+        const context = canvasRef.current.getContext("2d");
+
+        socket.on("drawNewLine", (line: Line) => {
+            drawLine(line);
+        });
+
+        socket.on("repaint", (lines: Line[]) => {
+            dispatch({ type: "CLEAR_CANVAS" });
+            lines.forEach((line: Line) => {
+                drawLine(line);
+            });
+        });
+
         if (context) {
             context.lineCap = "round";
             context.strokeStyle = color;
@@ -26,8 +71,7 @@ export function Canvas() {
 
     const startDrawing = ({ nativeEvent }: { nativeEvent: any }) => {
         const { offsetX, offsetY } = nativeEvent;
-        contextRef.current.beginPath();
-        contextRef.current.moveTo(offsetX, offsetY);
+        setPrevPosition({ x: offsetX, y: offsetY });
         setIsDrawing(true);
     };
 
@@ -35,6 +79,7 @@ export function Canvas() {
         const { pageX, pageY } = nativeEvent.touches[0];
         contextRef.current.beginPath();
         contextRef.current.moveTo(pageX - 80, pageY);
+        setPrevPosition({ x: pageX, y: pageY });
         setIsDrawing(true);
     };
 
@@ -47,8 +92,17 @@ export function Canvas() {
         document.body.style.cursor = "pointer";
         if (isDrawing) {
             const { offsetX, offsetY } = nativeEvent;
-            contextRef.current.lineTo(offsetX, offsetY);
-            contextRef.current.stroke();
+            const newLine: Line = {
+                user: name,
+                startPosition: prevPosition,
+                endPosition: { x: offsetX, y: offsetY },
+                color,
+                pointerSize
+            };
+            // setLines([...lines, newLine]);
+            drawLine(newLine);
+            sendNewLine(newLine);
+            setPrevPosition({ x: offsetX, y: offsetY });
         }
     };
 
