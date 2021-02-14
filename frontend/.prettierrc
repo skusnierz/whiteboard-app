@@ -3,5 +3,7 @@
     "tabWidth": 4,
     "printWidth": 100,
     "trailingComma": "none",
-    "jsxBracketSameLine": true
+    "jsxBracketSameLine": true,
+    "importOrder": ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
+    "importOrderSeparation": true,
 }

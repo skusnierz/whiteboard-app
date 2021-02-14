@@ -1,11 +1,15 @@
-import { Button, makeStyles, Paper, Link, Typography } from "@material-ui/core";
-import { Input } from "./Input";
+import { Button, Link, makeStyles, Paper, Typography } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/Lock";
-import React from "react";
-import "./login.scss";
-import { useHistory } from "react-router-dom";
+import { Alert } from "@material-ui/lab";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+
+import { Context } from "../../context/appContext";
+import { apiProvider } from "../../services/api";
 import { errorMessage } from "../../utils/errorMessage";
+import { Input } from "./Input";
+import "./login.scss";
 
 const useStyles = makeStyles({
     container: {
@@ -35,6 +39,12 @@ const useStyles = makeStyles({
         marginLeft: "5%",
         marginBottom: 10,
         cursor: "pointer"
+    },
+
+    error: {
+        width: "85%",
+        marginLeft: "5%",
+        marginTop: 10
     }
 });
 
@@ -47,10 +57,19 @@ export function Login() {
     const classes = useStyles();
     const history = useHistory();
     const { register, errors, handleSubmit } = useForm<FormData>();
+    const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
+    const [, dispatch] = useContext(Context);
 
     const signIn = ({ email, password }: FormData) => {
-        console.log(email);
-        console.log(password);
+        apiProvider
+            .loginUser({ email, password })
+            .then(async () => {
+                const username = await apiProvider.getUsername();
+                console.log(username);
+                dispatch({ type: "SET_USERNAME", username });
+                history.push("/white-board");
+            })
+            .catch((err) => setAprErrorMessage(err));
     };
 
     return (
@@ -66,7 +85,7 @@ export function Login() {
                         errorMessage={(label: string) => errorMessage(label, errors.email)}
                         ref={register({
                             required: true,
-                            pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i
+                            pattern: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i
                         })}
                         label={"Email"}
                         name={"email"}
@@ -84,6 +103,13 @@ export function Login() {
                         label={"Password"}
                         name={"password"}
                     />
+
+                    {apiErrorMessage !== "" && (
+                        <Alert severity="error" className={classes.error}>
+                            {apiErrorMessage}
+                        </Alert>
+                    )}
+
                     <Button
                         type="submit"
                         variant="contained"

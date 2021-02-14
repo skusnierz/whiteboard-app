@@ -1,10 +1,14 @@
 import { Button, makeStyles, Paper, Typography } from "@material-ui/core";
-import { Input } from "../Login/Input";
 import LockIcon from "@material-ui/icons/Lock";
-import "./register.scss";
-import { useHistory } from "react-router-dom";
+import { Alert } from "@material-ui/lab";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+
+import { apiProvider } from "../../services/api";
 import { errorMessage } from "../../utils/errorMessage";
+import { Input } from "../Login/Input";
+import "./register.scss";
 
 const useStyles = makeStyles({
     container: {
@@ -34,6 +38,12 @@ const useStyles = makeStyles({
         marginLeft: "5%",
         marginBottom: 10,
         cursor: "pointer"
+    },
+
+    error: {
+        width: "85%",
+        marginLeft: "5%",
+        marginTop: 10
     }
 });
 
@@ -48,12 +58,13 @@ export function Register() {
     const classes = useStyles();
     const history = useHistory();
     const { register, errors, handleSubmit, watch } = useForm<FormData>();
+    const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
 
-    const signIn = ({ email, username, password, confirmPassword }: FormData) => {
-        console.log(username);
-        console.log(email);
-        console.log(confirmPassword);
-        console.log(password);
+    const signIn = async ({ email, username, password }: FormData) => {
+        apiProvider
+            .registerUser({ email, username, password })
+            .then(() => history.push("/"))
+            .catch((err) => setAprErrorMessage(err));
     };
 
     return (
@@ -69,7 +80,7 @@ export function Register() {
                         error={errors.email !== undefined}
                         ref={register({
                             required: true,
-                            pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i
+                            pattern: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i
                         })}
                         label={"Email"}
                         name={"email"}
@@ -107,12 +118,19 @@ export function Register() {
                         ref={register({
                             required: true,
                             validate: (value) => {
-                                return value === watch("password1");
+                                return value === watch("password");
                             }
                         })}
                         label={"Confirm Password"}
                         name={"confirmPassword"}
                     />
+
+                    {apiErrorMessage !== "" && (
+                        <Alert severity="error" className={classes.error}>
+                            {apiErrorMessage}
+                        </Alert>
+                    )}
+
                     <div className="buttons">
                         <Button
                             type="submit"

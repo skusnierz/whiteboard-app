@@ -1,8 +1,10 @@
-import { addNewMessage } from './../controllers/messageController';
+import { register, login, getUsername } from './../controllers/userController';
 import express, { Router } from "express";
-import {getMessages} from "../controllers/messageController";
+import { authMiddleware } from '../middlewares/authMiddleware';
+import { validParams } from '../middlewares/paramsValidation';
 
 export const router: Router = express.Router();
 
-router.get('/message', getMessages);
-router.post('/message', addNewMessage);
+router.post('/user', validParams(["email", "password", "username"]), register);
+router.post('/user/login', validParams(["email", "password"]), login);
+router.get('/user', authMiddleware, validParams(["email"]), getUsername);

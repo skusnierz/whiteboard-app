@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
+
+import { Context } from "../../context/appContext";
 import { Canvas } from "../Canvas/Canvas";
 import { Chat } from "../Chat/Chat";
 import { Toolbox } from "../Toolbox/Toolbox";
 import "./whiteboard.scss";
-import { Context } from "../../context/appContext";
 
 export interface Message {
     author: string;

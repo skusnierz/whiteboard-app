@@ -1,8 +1,9 @@
 import React, { MutableRefObject, useContext, useEffect, useRef, useState } from "react";
-import { Context } from "../../context/appContext";
-import "./chat.scss";
 import Moment from "react-moment";
+
+import { Context } from "../../context/appContext";
 import { Message } from "../WhiteBoard/WhiteBoard";
+import "./chat.scss";
 
 interface ChatProps {
     messages: Message[];
@@ -10,7 +11,7 @@ interface ChatProps {
 }
 
 export function Chat({ messages, setMessages }: ChatProps) {
-    const [{ name, socket }] = useContext(Context);
+    const [{ username, socket }] = useContext(Context);
     const [message, setMessage] = useState<string>("");
     const test = useRef() as MutableRefObject<HTMLLIElement>;
 
@@ -22,13 +23,13 @@ export function Chat({ messages, setMessages }: ChatProps) {
         setMessages([
             ...messages,
             {
-                author: name,
+                author: username,
                 date: new Date(),
                 message
             }
         ]);
         socket.emit("newMessage", {
-            author: name,
+            author: username,
             date: new Date(),
             message
         });

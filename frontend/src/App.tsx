@@ -1,16 +1,17 @@
 import React, { useContext } from "react";
 import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
+
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
 import { WhiteBoard } from "./components/WhiteBoard/WhiteBoard";
 import { Context } from "./context/appContext";
 
 function App() {
-    const [{ name }] = useContext(Context);
+    const [{ username }] = useContext(Context);
 
     return (
         <Router>
-            {name === "" ? (
+            {username === "" ? (
                 <Redirect to={{ pathname: "/" }} />
             ) : (
                 <Redirect to={{ pathname: "/white-board" }} />

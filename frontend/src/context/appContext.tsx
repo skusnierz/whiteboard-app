@@ -1,15 +1,14 @@
-import { Socket } from "dgram";
-import { stat } from "fs";
 import React, { MutableRefObject, ReactElement, useReducer, useRef } from "react";
-import { io } from "socket.io-client";
+import { Socket } from "socket.io-client";
 
-const SERVER_URL = "http://192.168.0.97:8080";
+import { socketProvider } from "../services/socket";
+
 interface UserContextProps {
     children: ReactElement;
 }
 
 interface AppStateInterface {
-    name: string;
+    username: string;
     color: string;
     pointerSize: number;
     canvasRef: MutableRefObject<HTMLCanvasElement>;
@@ -18,7 +17,7 @@ interface AppStateInterface {
 }
 
 type actionType =
-    | { type: "SET_NAME"; name: string }
+    | { type: "SET_USERNAME"; username: string }
     | { type: "SET_COLOR"; color: string }
     | { type: "SET_POINTER_SIZE"; pointerSize: number }
     | { type: "CLEAR_CANVAS" }
@@ -28,16 +27,22 @@ type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
 
 const reducer = (state: AppStateInterface, action: actionType) => {
     switch (action.type) {
-        case "SET_NAME":
+        case "SET_USERNAME":
             sessionStorage.setItem(
                 "APP_CONTEXT",
-                JSON.stringify({ name: action.name, color: state.color })
+                JSON.stringify({
+                    username: action.username,
+                    color: state.color
+                })
             );
-            return { ...state, name: action.name };
+            return { ...state, username: action.username };
         case "SET_COLOR":
             sessionStorage.setItem(
                 "APP_CONTEXT",
-                JSON.stringify({ name: state.name, color: action.color })
+                JSON.stringify({
+                    username: state.username,
+                    color: action.color
+                })
             );
             return { ...state, color: action.color };
         case "SET_POINTER_SIZE":
@@ -52,7 +57,7 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             }
             return { ...state, canvasRef };
         case "CLEAR_LINES":
-            state.socket.emit("clearLines", state.name);
+            state.socket.emit("clearLines", state.username);
             return state;
         default:
             return state;
@@ -60,11 +65,11 @@ const reducer = (state: AppStateInterface, action: actionType) => {
 };
 
 let appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as string) || {
-    name: "",
+    username: "",
     color: "black"
 };
 appInitialContext.pointerSize = 1;
-appInitialContext.socket = io(SERVER_URL);
+appInitialContext.socket = socketProvider.socket;
 
 export const Context = React.createContext<AppContextInterface>([appInitialContext, () => null]);
 

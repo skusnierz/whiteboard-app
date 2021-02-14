@@ -1,6 +1,5 @@
 import { makeStyles, TextField } from "@material-ui/core";
 import React from "react";
-import { FieldError } from "react-hook-form";
 
 const useStyles = makeStyles({
     input: {
@@ -32,7 +31,7 @@ export const Input = React.forwardRef(({ label, name, error, errorMessage }: Inp
             helperText={errorMessage(label) || ""}
             inputRef={ref}
             label={label}
-            type={label === "Password" ? "password" : ""}
+            type={label === "Password" || label === "Confirm Password" ? "password" : ""}
             variant="outlined"
             className={classes.input}
             InputLabelProps={{

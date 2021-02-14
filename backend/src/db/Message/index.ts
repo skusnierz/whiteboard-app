@@ -1,9 +1,8 @@
-import { NewMessageType } from './../model/Message';
+import { NewMessageType } from '../../model/Message';
 import mongoose from "mongoose";
-import {MessageSchema} from "../model/Message";
+import {MessageSchema} from "../../model/Message";
 
 const Message = mongoose.model('Messages', MessageSchema);
-
 export const getMessagesFromDb = () => {
     return Message.find({})
         .then(messages => messages)
@@ -17,5 +16,5 @@ export const addNewMessageToDb = (message: NewMessageType) => {
         message: message.message
     });
 
-    newMessage.save((err) => console.log(err));
+    newMessage.save();
 };

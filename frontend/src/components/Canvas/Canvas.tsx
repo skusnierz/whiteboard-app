@@ -1,4 +1,5 @@
 import React, { MutableRefObject, useContext, useEffect, useRef, useState } from "react";
+
 import { Context } from "../../context/appContext";
 import "./canvas.scss";
 
@@ -16,7 +17,7 @@ interface Line {
 }
 
 export function Canvas() {
-    const [{ color, pointerSize, canvasRef, contextRef, socket, name }, dispatch] = useContext(
+    const [{ color, pointerSize, canvasRef, contextRef, socket, username }, dispatch] = useContext(
         Context
     );
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
@@ -93,7 +94,7 @@ export function Canvas() {
         if (isDrawing) {
             const { offsetX, offsetY } = nativeEvent;
             const newLine: Line = {
-                user: name,
+                user: username,
                 startPosition: prevPosition,
                 endPosition: { x: offsetX, y: offsetY },
                 color,

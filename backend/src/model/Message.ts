@@ -6,10 +6,10 @@ export const MessageSchema = new Schema({
     message: String
 });
 
-export type MessageType = {
-    author: string,
-    date: Date,
-    message: string
+export interface Message {
+    author: string;
+    date: Date;
+    message: string;
 };
 
-export type NewMessageType = Omit<MessageType, "date">;
+export type NewMessageType = Omit<Message, "date">;
