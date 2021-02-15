@@ -21,7 +21,8 @@ type actionType =
     | { type: "SET_COLOR"; color: string }
     | { type: "SET_POINTER_SIZE"; pointerSize: number }
     | { type: "CLEAR_CANVAS" }
-    | { type: "CLEAR_LINES" };
+    | { type: "CLEAR_LINES" }
+    | { type: "LOGOUT" };
 
 type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
 
@@ -59,6 +60,9 @@ const reducer = (state: AppStateInterface, action: actionType) => {
         case "CLEAR_LINES":
             state.socket.emit("clearLines", state.username);
             return state;
+        case "LOGOUT":
+            sessionStorage.removeItem("APP_CONTEXT");
+            return { ...state, username: "", color: "black" };
         default:
             return state;
     }

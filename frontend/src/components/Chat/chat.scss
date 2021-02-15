@@ -7,9 +7,14 @@ $font_color: #606060;
 }
 
 .input {
-    width: 80%;
-    position: relative;
+    outline: none;
+    height: 25px;
+    border-radius: 30px;
+    left: 79.25%;
+    width: 18%;
+    position: fixed;
     top: 95%;
+    padding-left: 10px;
 }
 
 ::-webkit-scrollbar {

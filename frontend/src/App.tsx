@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Redirect, Route } from "react-router-dom";
 
 import { Login } from "./components/Login/Login";
 import { Register } from "./components/Register/Register";
+import { RoomList } from "./components/RoomList/RoomList";
 import { WhiteBoard } from "./components/WhiteBoard/WhiteBoard";
 import { Context } from "./context/appContext";
 
@@ -11,13 +12,10 @@ function App() {
 
     return (
         <Router>
-            {username === "" ? (
-                <Redirect to={{ pathname: "/" }} />
-            ) : (
-                <Redirect to={{ pathname: "/white-board" }} />
-            )}
+            {username === "" && <Redirect to={{ pathname: "/" }} />}
             <Route exact path="/" component={Login} />
             <Route path="/white-board" component={WhiteBoard} />
+            <Route path="/room-list" component={RoomList} />
             <Route path="/register" component={Register} />
         </Router>
     );

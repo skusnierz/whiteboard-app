@@ -67,7 +67,7 @@ export function Login() {
                 const username = await apiProvider.getUsername();
                 console.log(username);
                 dispatch({ type: "SET_USERNAME", username });
-                history.push("/white-board");
+                history.push("/room-list");
             })
             .catch((err) => setAprErrorMessage(err));
     };
