@@ -57,11 +57,11 @@ export function RoomList() {
                         <TableRow>
                             <TableCell>
                                 <IconButton onClick={() => setOpenDialog(true)}>
-                                    <Add style={{color: "white"}}/>
+                                    <Add style={{ color: "white" }} />
                                 </IconButton>
                             </TableCell>
-                            <TableCell style={{color: "white"}}>Room Name</TableCell>
-                            <TableCell style={{color: "white"}}>Owner</TableCell>
+                            <TableCell style={{ color: "white" }}>Room Name</TableCell>
+                            <TableCell style={{ color: "white" }}>Owner</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>

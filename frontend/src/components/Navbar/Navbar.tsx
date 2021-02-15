@@ -20,9 +20,12 @@ export function Navbar() {
         <AppBar position="fixed">
             <Toolbar>
                 <Button color="inherit" onClick={() => history.push("/room-list")}>
-                    All Rooms
+                    Rooms
                 </Button>
-                <Button color="inherit" className={classes.button}>
+                <Button
+                    color="inherit"
+                    onClick={() => history.push("/my-rooms")}
+                    className={classes.button}>
                     My Rooms
                 </Button>
                 <Button
