@@ -11,8 +11,8 @@ export const verifyPassword = async (password: string, hash: string): Promise<bo
     return await bcrypt.compare(password, hash);
 };
 
-export const createToken = (email: string): string => {
-    return jwt.sign({ email }, process.env.JWT_SECRET || "", { expiresIn: process.env.TOKEN_EXPIRE_TIME || "3d" });
+export const createToken = (email: string, username: string): string => {
+    return jwt.sign({ email, username }, process.env.JWT_SECRET || "", { expiresIn: process.env.TOKEN_EXPIRE_TIME || "3d" });
 };
 
 export const verifyToken = (token: string): any => {

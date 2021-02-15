@@ -1,3 +1,4 @@
+import { addRoomToDb, deleteRoomFromDb } from './db/Room/index';
 import { addNewLineToDb, deleteLines, getLines } from './db/Line/index';
 import { LineType } from './model/Line';
 import { addNewMessageToDb, getMessagesFromDb } from './db/Message/index';
@@ -10,6 +11,7 @@ import { Server, Socket } from "socket.io";
 import { initializeDb } from "./db/configuration/database";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import { Room } from './model/Room';
 
 dotenv.config();
 
@@ -53,6 +55,14 @@ io.on('connection', async (socket: Socket) => {
         io.sockets.emit("repaint", await getLines());
         console.log("Delete lines");
     })
+
+    socket.on("addRoom", async (room: Room) => {
+        await addRoomToDb(room);
+    });
+
+    socket.on("deleteRoom", async (room: Room) => {
+        await deleteRoomFromDb(room);
+    });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');

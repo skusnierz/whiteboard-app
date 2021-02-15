@@ -34,6 +34,8 @@ export const loginUser = async ({email, password}: UserLoginInput) => {
     if (!await verifyPassword(password, user.password)) {
         throw new Error(INVALID_PASSWORD_ERROR);
     }
+
+    return user;
 }
 
 export const getUsernameFromDb = async ({email}: UsernameInput) => {

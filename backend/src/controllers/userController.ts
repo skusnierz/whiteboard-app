@@ -1,32 +1,27 @@
 import { createToken } from './../auth/index';
 import { registerUser, loginUser, getUsernameFromDb } from './../db/User/index';
 import { RequestHandler, Response } from 'express';
+import { sendError } from "../utils/error";
 
 const REGISTER_SUCCESSFUL_MESSAGE: string = "Added new user!";
 const LOGIN_SUCCESSFUL_MESSAGE: string = "Login successful!";
 
-const sendError = (res: Response, errorMessage: string) => {
-    res.statusCode = 400;
-    res.send({message: errorMessage});
-};
-
 export const register: RequestHandler = async (req, res): Promise<void> => {
     try {
         await registerUser(req.body);
+        res.statusCode = 200;
+        res.send({message: REGISTER_SUCCESSFUL_MESSAGE})
     } catch(e) {
         console.log(e);
         sendError(res, e.message);
-        return;
     }
-    res.statusCode = 200;
-    res.send({message: REGISTER_SUCCESSFUL_MESSAGE})
 }
 
 export const login: RequestHandler = async (req, res): Promise<void> => {
     try {
-        await loginUser(req.body);
+        const user = await loginUser(req.body);
         res.statusCode = 200;
-        res.send({message: LOGIN_SUCCESSFUL_MESSAGE, token: await createToken(req.body.email)});
+        res.send({message: LOGIN_SUCCESSFUL_MESSAGE, token: await createToken(user.email, user.username), username: user.username});
     } catch(e) {
         console.log(e);
         sendError(res, e.message);

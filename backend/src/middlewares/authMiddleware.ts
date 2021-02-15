@@ -13,8 +13,9 @@ export const authMiddleware: RequestHandler = (req, res, next) => {
         return;
     }
     try {
-        const {email} = verifyToken(req.headers.authorization);
+        const {email, username} = verifyToken(req.headers.authorization);
         req.body.email = email;
+        req.body.username = username;
         next();
     } catch(e) {
         sendError(res, e.message);
