@@ -58,6 +58,7 @@ io.on('connection', async (socket: Socket) => {
 
     socket.on("addRoom", async (room: Room) => {
         await addRoomToDb(room);
+        io.sockets.emit("newRoom", room);
     });
 
     socket.on("deleteRoom", async (room: Room) => {

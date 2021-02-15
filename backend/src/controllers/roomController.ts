@@ -1,4 +1,4 @@
-import { addRoomToDb, deleteRoomFromDb, getRoomFromDb, getRoomsFromDb } from "./../db/Room/index";
+import { addRoomToDb, deleteRoomFromDb, getRoomFromDb, getRoomsFromDb, getUserRoomsFromDb, roomExistInDb } from "./../db/Room/index";
 import { RequestHandler } from "express";
 import { sendError } from "../utils/error";
 
@@ -27,6 +27,17 @@ export const getRooms: RequestHandler = async (req, res): Promise<void> => {
     }
 }
 
+export const getUserRooms: RequestHandler = async (req, res): Promise<void> => {
+    try {
+        const rooms = await getUserRoomsFromDb(req.body.email);
+        res.statusCode = 200;
+        res.send(rooms);
+    } catch(e) {
+        console.log(e);
+        sendError(res, e.message);
+    }
+}
+
 export const deleteRoom: RequestHandler = async (req, res): Promise<void> => {
     try {
         const room = await getRoomFromDb(req.body.name);
@@ -41,4 +52,10 @@ export const deleteRoom: RequestHandler = async (req, res): Promise<void> => {
         console.log(e);
         sendError(res, e.message);
     }
+}
+
+export const roomExist: RequestHandler = async (req, res) => {
+    const roomExist: boolean = await roomExistInDb(req.params.name);
+    res.statusCode = 200;
+    res.send({roomExist});
 }

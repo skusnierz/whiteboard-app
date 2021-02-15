@@ -1,5 +1,4 @@
 import {
-    Button,
     IconButton,
     makeStyles,
     Table,
@@ -10,30 +9,47 @@ import {
     TableRow
 } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
-import React, { useState } from "react";
+import { Alert } from "@material-ui/lab";
+import React, { useEffect, useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
 
+import { Room } from "../../model/room";
+import { apiProvider } from "../../services/api";
 import { Navbar } from "../Navbar/Navbar";
 
 const useStyles = makeStyles({
     tableHead: {
         backgroundColor: "#2a9df4"
     },
+
     table: {
         width: "60%",
         marginLeft: "20%",
         marginTop: 100
+    },
+
+    error: {
+        width: "58.5%",
+        marginLeft: "20%",
+        marginTop: 10
     }
 });
 
-const roomList = [
-    { owner: "Maciek", name: "Klasa 5" },
-    { owner: "Jacek", name: "Klasa 2" },
-    { owner: "Jakub", name: "TEST" }
-];
-
 export function MyRooms() {
     const classes = useStyles();
-    const [rooms, setRooms] = useState(roomList);
+    const [rooms, setRooms] = useState<Room[]>([]);
+    const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
+
+    useEffect(() => {
+        const getRooms = async () => {
+            apiProvider
+                .getUserRooms()
+                .then((rooms) => setRooms(rooms))
+                .catch((err) => setAprErrorMessage(err));
+        };
+
+        getRooms();
+    }, []);
 
     return (
         <>
@@ -43,17 +59,23 @@ export function MyRooms() {
                     <TableHead className={classes.tableHead}>
                         <TableRow>
                             <TableCell style={{ color: "white" }}>L.P.</TableCell>
-                            <TableCell style={{ color: "white" }}>Name</TableCell>
+                            <TableCell style={{ color: "white" }}>Room Name</TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rooms.map((room, idx) => (
-                            <TableRow>
+                            <TableRow key={idx}>
                                 <TableCell>{idx + 1}</TableCell>
                                 <TableCell>{room.name}</TableCell>
                                 <TableCell>
-                                    <IconButton>
+                                    <IconButton
+                                        onClick={() => {
+                                            setRooms(rooms.filter((el) => el.name !== room.name));
+                                            apiProvider
+                                                .deleteRoom(room.name)
+                                                .catch((err) => setAprErrorMessage(err));
+                                        }}>
                                         <Delete />
                                     </IconButton>
                                 </TableCell>
@@ -62,6 +84,11 @@ export function MyRooms() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            {apiErrorMessage !== "" && (
+                <Alert severity="error" className={classes.error}>
+                    {apiErrorMessage}
+                </Alert>
+            )}
         </>
     );
 }

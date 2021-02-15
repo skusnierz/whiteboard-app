@@ -32,11 +32,19 @@ export const deleteRoomFromDb = async (room: Room) => {
     });
 }
 
-
 export const getRoomFromDb = async (name: string) => {
     const room = await Room.findOne({name});
     if(!room) {
         throw new Error(ROOM_NOT_EXIST_ERROR);
     }
     return room;
+}
+
+export const roomExistInDb = async (name: string): Promise<boolean> => {
+    const room = await Room.findOne({name});
+    return room !== null;
+}
+
+export const getUserRoomsFromDb = async (email: string) => {
+    return await Room.find({email});
 }

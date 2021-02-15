@@ -10,8 +10,12 @@ import {
     IconButton
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
-import React, { useState } from "react";
+import { Alert } from "@material-ui/lab";
+import React, { useContext, useEffect, useState } from "react";
 
+import { Context } from "../../context/appContext";
+import { Room } from "../../model/room";
+import { apiProvider } from "../../services/api";
 import { Navbar } from "../Navbar/Navbar";
 import { NewRoomDialog } from "./NewRoomDialog";
 
@@ -34,18 +38,36 @@ const useStyles = makeStyles({
     },
     countCell: {
         paddingLeft: 35
+    },
+    error: {
+        width: "78.5%",
+        marginLeft: "10%",
+        marginTop: 10
     }
 });
 
-const roomList = [
-    { owner: "Maciek", name: "Klasa 5" },
-    { owner: "Jacek", name: "Klasa 2" },
-    { owner: "Jakub", name: "TEST" }
-];
-
 export function RoomList() {
-    const [rooms, setRooms] = useState(roomList);
+    const [{ socket }] = useContext(Context);
+    const [rooms, setRooms] = useState<Room[]>([]);
     const [openDialog, setOpenDialog] = useState(false);
+    const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
+
+    useEffect(() => {
+        socket.on("newRoom", (room: Room) => {
+            setRooms([...rooms, room]);
+        });
+    }, [rooms, socket]);
+
+    useEffect(() => {
+        const getRooms = async () => {
+            apiProvider
+                .getRooms()
+                .then((rooms) => setRooms(rooms))
+                .catch((err) => setAprErrorMessage(err));
+        };
+
+        getRooms();
+    }, []);
 
     const classes = useStyles();
     return (
@@ -67,10 +89,10 @@ export function RoomList() {
                     </TableHead>
                     <TableBody>
                         {rooms.map((room, idx) => (
-                            <TableRow>
+                            <TableRow key={idx}>
                                 <TableCell className={classes.countCell}>{idx + 1}</TableCell>
                                 <TableCell>{room.name}</TableCell>
-                                <TableCell>{room.owner}</TableCell>
+                                <TableCell>{room.username}</TableCell>
                                 <TableCell>
                                     <Button variant="contained" className={classes.joinInButton}>
                                         Join In
@@ -82,6 +104,11 @@ export function RoomList() {
                 </Table>
             </TableContainer>
             <NewRoomDialog open={openDialog} setOpen={setOpenDialog} />
+            {apiErrorMessage !== "" && (
+                <Alert severity="error" className={classes.error}>
+                    {apiErrorMessage}
+                </Alert>
+            )}
         </>
     );
 }

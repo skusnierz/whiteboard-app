@@ -9,6 +9,7 @@ interface UserContextProps {
 
 interface AppStateInterface {
     username: string;
+    email: string;
     color: string;
     pointerSize: number;
     canvasRef: MutableRefObject<HTMLCanvasElement>;
@@ -18,6 +19,7 @@ interface AppStateInterface {
 
 type actionType =
     | { type: "SET_USERNAME"; username: string }
+    | { type: "SET_EMAIL"; email: string }
     | { type: "SET_COLOR"; color: string }
     | { type: "SET_POINTER_SIZE"; pointerSize: number }
     | { type: "CLEAR_CANVAS" }
@@ -33,16 +35,28 @@ const reducer = (state: AppStateInterface, action: actionType) => {
                 "APP_CONTEXT",
                 JSON.stringify({
                     username: action.username,
-                    color: state.color
+                    color: state.color,
+                    email: state.email
                 })
             );
             return { ...state, username: action.username };
+        case "SET_EMAIL":
+            sessionStorage.setItem(
+                "APP_CONTEXT",
+                JSON.stringify({
+                    username: state.username,
+                    color: state.color,
+                    email: action.email
+                })
+            );
+            return { ...state, email: action.email };
         case "SET_COLOR":
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
                     username: state.username,
-                    color: action.color
+                    color: action.color,
+                    email: state.email
                 })
             );
             return { ...state, color: action.color };
@@ -70,7 +84,8 @@ const reducer = (state: AppStateInterface, action: actionType) => {
 
 let appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as string) || {
     username: "",
-    color: "black"
+    color: "black",
+    email: ""
 };
 appInitialContext.pointerSize = 1;
 appInitialContext.socket = socketProvider.socket;

@@ -63,10 +63,9 @@ export function Login() {
     const signIn = ({ email, password }: FormData) => {
         apiProvider
             .loginUser({ email, password })
-            .then(async () => {
-                const username = await apiProvider.getUsername();
-                console.log(username);
+            .then(async (username) => {
                 dispatch({ type: "SET_USERNAME", username });
+                dispatch({ type: "SET_EMAIL", email });
                 history.push("/room-list");
             })
             .catch((err) => setAprErrorMessage(err));

@@ -8,7 +8,11 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { createStyles, makeStyles, Theme, withStyles, WithStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import React, { useState } from "react";
+import { Alert } from "@material-ui/lab";
+import React, { useContext, useState } from "react";
+
+import { Context } from "../../context/appContext";
+import { apiProvider } from "../../services/api";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -43,6 +47,12 @@ const useStyles = makeStyles({
         "&:hover, &:focus": {
             backgroundColor: "#187bcd"
         }
+    },
+
+    error: {
+        width: "85%",
+        marginLeft: "5%",
+        marginTop: 10
     }
 });
 
@@ -86,11 +96,37 @@ interface NewRoomDialogProps {
 }
 
 export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
+    const [{ email, username, socket }] = useContext(Context);
     const [roomName, setRoomName] = useState("");
     const [submit, setSubmit] = useState(false);
+    const [apiErrorMessage, setApiErrorMessage] = useState("");
     const classes = useStyles();
 
-    console.log(roomName);
+    const setInitialValue = () => {
+        setOpen(false);
+        setRoomName("");
+        setSubmit(false);
+        setApiErrorMessage("");
+    };
+    const onSubmit = () => {
+        setSubmit(true);
+        roomName !== "" &&
+            apiProvider
+                .roomExist(roomName)
+                .then((res) => {
+                    if (res) {
+                        setApiErrorMessage("Room already exist");
+                    } else {
+                        socket.emit("addRoom", {
+                            name: roomName,
+                            email,
+                            username
+                        });
+                        setInitialValue();
+                    }
+                })
+                .catch((err) => setApiErrorMessage(err));
+    };
 
     return (
         <Dialog
@@ -123,26 +159,20 @@ export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
                     }}
                 />
             </DialogContent>
+            {apiErrorMessage !== "" && (
+                <Alert severity="error" className={classes.error}>
+                    {apiErrorMessage}
+                </Alert>
+            )}
             <DialogActions>
                 <Button
                     autoFocus
-                    onClick={() => {
-                        setSubmit(true);
-                        roomName !== "" && setOpen(false) && setRoomName("") && setSubmit(false);
-                    }}
+                    onClick={onSubmit}
                     className={classes.addButton}
                     variant="contained">
                     Add
                 </Button>
-                <Button
-                    autoFocus
-                    onClick={() => {
-                        setOpen(false);
-                        setSubmit(false);
-                        setRoomName("");
-                    }}
-                    variant="contained"
-                    color="secondary">
+                <Button autoFocus onClick={setInitialValue} variant="contained" color="secondary">
                     Cancel
                 </Button>
             </DialogActions>
