@@ -17,17 +17,12 @@ export const addRoomToDb = async (room: Room) => {
         throw new Error(ROOM_EXIST_ERROR);
     }
 
-    const newRoom = new Room({
-        name: room.name,
-        username: room.username,
-        email: room.email
-    });
-
+    const newRoom = new Room({...room});
     await newRoom.save();
 };
 
 export const deleteRoomFromDb = async (room: Room) => {
-    await Room.deleteOne({name: room.name}, {}, (err) => {
+    await Room.deleteOne({...room}, {}, (err) => {
         if(err)  throw new Error(err.message);
     });
 }

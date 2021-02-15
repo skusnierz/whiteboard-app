@@ -7,10 +7,15 @@ interface UserContextProps {
     children: ReactElement;
 }
 
-interface AppStateInterface {
+interface SessionStorageContext {
     username: string;
     email: string;
+    roomName: string;
     color: string;
+}
+
+interface AppStateInterface {
+    sessionStorageContext: SessionStorageContext;
     pointerSize: number;
     canvasRef: MutableRefObject<HTMLCanvasElement>;
     contextRef: MutableRefObject<CanvasRenderingContext2D>;
@@ -19,6 +24,7 @@ interface AppStateInterface {
 
 type actionType =
     | { type: "SET_USERNAME"; username: string }
+    | { type: "SET_ROOM_NAME"; roomName: string }
     | { type: "SET_EMAIL"; email: string }
     | { type: "SET_COLOR"; color: string }
     | { type: "SET_POINTER_SIZE"; pointerSize: number }
@@ -34,32 +40,62 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    username: action.username,
-                    color: state.color,
-                    email: state.email
+                    ...state.sessionStorageContext,
+                    username: action.username
                 })
             );
-            return { ...state, username: action.username };
+            return {
+                ...state,
+                sessionStorageContext: {
+                    ...state.sessionStorageContext,
+                    username: action.username
+                }
+            };
+        case "SET_ROOM_NAME":
+            sessionStorage.setItem(
+                "APP_CONTEXT",
+                JSON.stringify({
+                    ...state.sessionStorageContext,
+                    roomName: action.roomName
+                })
+            );
+            return {
+                ...state,
+                sessionStorageContext: {
+                    ...state.sessionStorageContext,
+                    roomName: action.roomName
+                }
+            };
         case "SET_EMAIL":
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    username: state.username,
-                    color: state.color,
+                    ...state.sessionStorageContext,
                     email: action.email
                 })
             );
-            return { ...state, email: action.email };
+            return {
+                ...state,
+                sessionStorageContext: {
+                    ...state.sessionStorageContext,
+                    email: action.email
+                }
+            };
         case "SET_COLOR":
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    username: state.username,
-                    color: action.color,
-                    email: state.email
+                    ...state.sessionStorageContext,
+                    color: action.color
                 })
             );
-            return { ...state, color: action.color };
+            return {
+                ...state,
+                sessionStorageContext: {
+                    ...state.sessionStorageContext,
+                    color: action.color
+                }
+            };
         case "SET_POINTER_SIZE":
             return { ...state, pointerSize: action.pointerSize };
         case "CLEAR_CANVAS":
@@ -72,7 +108,7 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             }
             return { ...state, canvasRef };
         case "CLEAR_LINES":
-            state.socket.emit("clearLines", state.username);
+            state.socket.emit("clearLines", state.sessionStorageContext.username);
             return state;
         case "LOGOUT":
             sessionStorage.removeItem("APP_CONTEXT");
@@ -82,10 +118,15 @@ const reducer = (state: AppStateInterface, action: actionType) => {
     }
 };
 
-let appInitialContext = JSON.parse(sessionStorage.getItem("APP_CONTEXT") as string) || {
+let appInitialContext = {} as AppStateInterface;
+
+appInitialContext.sessionStorageContext = JSON.parse(
+    sessionStorage.getItem("APP_CONTEXT") as string
+) || {
     username: "",
     color: "black",
-    email: ""
+    email: "",
+    roomName: ""
 };
 appInitialContext.pointerSize = 1;
 appInitialContext.socket = socketProvider.socket;

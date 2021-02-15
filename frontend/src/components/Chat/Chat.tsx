@@ -2,7 +2,7 @@ import React, { MutableRefObject, useContext, useEffect, useRef, useState } from
 import Moment from "react-moment";
 
 import { Context } from "../../context/appContext";
-import { Message } from "../WhiteBoard/WhiteBoard";
+import { Message } from "../../model/message";
 import "./chat.scss";
 
 interface ChatProps {
@@ -11,12 +11,21 @@ interface ChatProps {
 }
 
 export function Chat({ messages, setMessages }: ChatProps) {
-    const [{ username, socket }] = useContext(Context);
+    const [
+        {
+            sessionStorageContext: { username, roomName },
+            socket
+        }
+    ] = useContext(Context);
     const [message, setMessage] = useState<string>("");
-    const test = useRef() as MutableRefObject<HTMLLIElement>;
+    const lastMessageRef = useRef() as MutableRefObject<HTMLLIElement>;
 
     useEffect(() => {
-        test?.current?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+        lastMessageRef?.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+            inline: "nearest"
+        });
     }, [messages, setMessages]);
 
     const onClick = () => {
@@ -25,13 +34,15 @@ export function Chat({ messages, setMessages }: ChatProps) {
             {
                 author: username,
                 date: new Date(),
-                message
+                message,
+                roomName
             }
         ]);
         socket.emit("newMessage", {
             author: username,
             date: new Date(),
-            message
+            message,
+            roomName
         });
         setMessage("");
     };
@@ -41,7 +52,7 @@ export function Chat({ messages, setMessages }: ChatProps) {
             <ul>
                 {messages.map((message, idx: number) =>
                     idx !== messages.length ? (
-                        <li ref={test} key={idx}>
+                        <li ref={lastMessageRef} key={idx}>
                             <p>
                                 {message.author} <Moment date={message.date} format="HH:mm:ss" />
                             </p>

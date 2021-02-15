@@ -11,6 +11,7 @@ export interface LineType {
     endPosition: Position;
     color: string;
     pointerSize: string;
+    roomName: string;
 }
 
 export const LineSchema = new Schema({
@@ -24,5 +25,6 @@ export const LineSchema = new Schema({
         y: Number
     },
     color: String,
-    pointerSize: String
+    pointerSize: String,
+    roomName: String
 });

@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { Context } from "../../context/appContext";
+import { Message } from "../../model/message";
 import { Canvas } from "../Canvas/Canvas";
 import { Chat } from "../Chat/Chat";
 import { Navbar } from "../Navbar/Navbar";
 import { Toolbox } from "../Toolbox/Toolbox";
 import "./whiteboard.scss";
 
-export interface Message {
-    author: string;
-    date: Date;
-    message: string;
-}
-
 export function WhiteBoard() {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [{ socket }] = useContext(Context);
+    const [
+        {
+            sessionStorageContext: { roomName },
+            socket
+        }
+    ] = useContext(Context);
     useEffect(() => {
         socket.on("messages", (messages: Message[]) => {
             setMessages(messages);
@@ -23,8 +23,8 @@ export function WhiteBoard() {
     });
 
     useEffect(() => {
-        socket.emit("getMessages");
-    }, [socket]);
+        socket.emit("getMessages", roomName);
+    }, [socket, roomName]);
 
     return (
         <>

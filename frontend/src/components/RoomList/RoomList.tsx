@@ -12,6 +12,7 @@ import {
 import { Add } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 
 import { Context } from "../../context/appContext";
 import { Room } from "../../model/room";
@@ -47,10 +48,11 @@ const useStyles = makeStyles({
 });
 
 export function RoomList() {
-    const [{ socket }] = useContext(Context);
+    const [{ socket }, dispatch] = useContext(Context);
     const [rooms, setRooms] = useState<Room[]>([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
+    const history = useHistory();
 
     useEffect(() => {
         socket.on("newRoom", (room: Room) => {
@@ -94,7 +96,16 @@ export function RoomList() {
                                 <TableCell>{room.name}</TableCell>
                                 <TableCell>{room.username}</TableCell>
                                 <TableCell>
-                                    <Button variant="contained" className={classes.joinInButton}>
+                                    <Button
+                                        variant="contained"
+                                        className={classes.joinInButton}
+                                        onClick={() => {
+                                            dispatch({
+                                                type: "SET_ROOM_NAME",
+                                                roomName: room.name
+                                            });
+                                            history.push("/white-board");
+                                        }}>
                                         Join In
                                     </Button>
                                 </TableCell>

@@ -17,9 +17,16 @@ interface Line {
 }
 
 export function Canvas() {
-    const [{ color, pointerSize, canvasRef, contextRef, socket, username }, dispatch] = useContext(
-        Context
-    );
+    const [
+        {
+            sessionStorageContext: { username, color },
+            pointerSize,
+            canvasRef,
+            contextRef,
+            socket
+        },
+        dispatch
+    ] = useContext(Context);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
     const divRef = useRef() as MutableRefObject<HTMLDivElement>;
     const [lines, setLines] = useState<Line[]>([]);

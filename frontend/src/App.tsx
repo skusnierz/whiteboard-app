@@ -9,7 +9,11 @@ import { WhiteBoard } from "./components/WhiteBoard/WhiteBoard";
 import { Context } from "./context/appContext";
 
 function App() {
-    const [{ username }] = useContext(Context);
+    const [
+        {
+            sessionStorageContext: { username }
+        }
+    ] = useContext(Context);
 
     return (
         <Router>

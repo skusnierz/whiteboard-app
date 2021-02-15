@@ -35,13 +35,13 @@ app.use(router);
 io.on('connection', async (socket: Socket) => {
     console.log("Connected new user");
 
-    socket.on("getMessages", async () => {
-        io.sockets.emit("messages", await getMessagesFromDb());
+    socket.on("getMessages", async (roomName: string) => {
+        io.sockets.emit("messages", await getMessagesFromDb(roomName));
     });
 
     socket.on("newMessage", async (msg: NewMessageType) => {
         await addNewMessageToDb(msg);
-        io.sockets.emit("messages", await getMessagesFromDb());
+        io.sockets.emit("messages", await getMessagesFromDb(msg.roomName));
         console.log("Added new message to DB");
     });
 

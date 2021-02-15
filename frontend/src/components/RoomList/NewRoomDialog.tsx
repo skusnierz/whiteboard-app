@@ -96,7 +96,12 @@ interface NewRoomDialogProps {
 }
 
 export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
-    const [{ email, username, socket }] = useContext(Context);
+    const [
+        {
+            sessionStorageContext: { username, email },
+            socket
+        }
+    ] = useContext(Context);
     const [roomName, setRoomName] = useState("");
     const [submit, setSubmit] = useState(false);
     const [apiErrorMessage, setApiErrorMessage] = useState("");
