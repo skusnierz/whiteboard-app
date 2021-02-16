@@ -17,3 +17,7 @@ export const addNewMessageToDb = (message: NewMessageType) => {
 
     newMessage.save();
 };
+
+export const deleteMessages = async (roomName: string) => {
+    await Message.deleteMany({roomName});
+}

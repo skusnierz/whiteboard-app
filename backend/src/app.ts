@@ -1,5 +1,5 @@
 import { addRoomToDb, deleteRoomFromDb } from './db/Room/index';
-import { addNewLineToDb, deleteLines, getLines } from './db/Line/index';
+import { addNewLineToDb, deleteUserLines, getLines } from './db/Line/index';
 import { LineType } from './model/Line';
 import { addNewMessageToDb, getMessagesFromDb } from './db/Message/index';
 import { NewMessageType } from './model/Message';
@@ -51,7 +51,7 @@ io.on('connection', async (socket: Socket) => {
     });
 
     socket.on("clearLines", async (name: string) => {
-        await deleteLines(name);
+        await deleteUserLines(name);
         io.sockets.emit("repaint", await getLines());
         console.log("Delete lines");
     })

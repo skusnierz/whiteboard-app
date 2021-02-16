@@ -10,8 +10,14 @@ export const addNewLineToDb = async (line: LineType): Promise<void> => {
     });
 }
 
-export const deleteLines = async (name: string): Promise<void> => {
-    await Line.deleteMany({user: name}, {}, (err: any) => {
+export const deleteUserLines = async (username: string): Promise<void> => {
+    await Line.deleteMany({user: username}, {}, (err: any) => {
+        if(err) console.log(err);
+    });
+}
+
+export const deleteAllLines = async (roomName: string): Promise<void> => {
+    await Line.deleteMany({roomName}, {}, (err: any) => {
         if(err) console.log(err);
     });
 }
