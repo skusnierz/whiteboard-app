@@ -23,7 +23,12 @@ export function WhiteBoard() {
     });
 
     useEffect(() => {
+        socket.emit("joinToRoom", roomName);
         socket.emit("getMessages", roomName);
+
+        return () => {
+            socket.emit("leaveRoom", roomName);
+        };
     }, [socket, roomName]);
 
     return (

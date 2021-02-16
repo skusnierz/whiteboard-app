@@ -46,6 +46,14 @@ export function Toolbox() {
                 }}>
                 Clear
             </button>
+            <button
+                className="line"
+                onClick={() => {
+                    dispatch({ type: "CLEAR_CANVAS" });
+                    dispatch({ type: "CLEAR_ALL_LINES" });
+                }}>
+                Clear All
+            </button>
         </div>
     );
 }

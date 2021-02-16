@@ -1,11 +1,11 @@
-import { Schema } from "mongoose";
+import { Schema, Document } from "mongoose";
 
 export interface Position {
     x: number;
     y: number;
 }
 
-export interface LineType {
+export interface LineType extends Document {
     user: string;
     startPosition: Position;
     endPosition: Position;

@@ -1,25 +1,14 @@
 import React, { MutableRefObject, useContext, useEffect, useRef, useState } from "react";
 
 import { Context } from "../../context/appContext";
+import { Line, Position } from "../../model/line";
+import { apiProvider } from "../../services/api";
 import "./canvas.scss";
-
-interface Position {
-    x: number;
-    y: number;
-}
-
-interface Line {
-    user: string;
-    startPosition: Position;
-    endPosition: Position;
-    pointerSize: number;
-    color: string;
-}
 
 export function Canvas() {
     const [
         {
-            sessionStorageContext: { username, color },
+            sessionStorageContext: { username, color, roomName },
             pointerSize,
             canvasRef,
             contextRef,
@@ -29,7 +18,6 @@ export function Canvas() {
     ] = useContext(Context);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
     const divRef = useRef() as MutableRefObject<HTMLDivElement>;
-    const [lines, setLines] = useState<Line[]>([]);
     const [prevPosition, setPrevPosition] = useState<Position>({ x: 0, y: 0 });
 
     const sendNewLine = (line: Line) => {
@@ -57,6 +45,12 @@ export function Canvas() {
 
     useEffect(() => {
         const context = canvasRef.current.getContext("2d");
+
+        apiProvider.getLines(roomName).then((lines) => {
+            lines.forEach((line: Line) => {
+                drawLine(line);
+            });
+        });
 
         socket.on("drawNewLine", (line: Line) => {
             drawLine(line);
@@ -105,7 +99,8 @@ export function Canvas() {
                 startPosition: prevPosition,
                 endPosition: { x: offsetX, y: offsetY },
                 color,
-                pointerSize
+                pointerSize,
+                roomName
             };
             // setLines([...lines, newLine]);
             drawLine(newLine);

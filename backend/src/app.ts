@@ -1,5 +1,5 @@
 import { addRoomToDb, deleteRoomFromDb } from './db/Room/index';
-import { addNewLineToDb, deleteUserLines, getLines } from './db/Line/index';
+import { addNewLineToDb, deleteAllLines, deleteUserLines, getLinesFromDb } from './db/Line/index';
 import { LineType } from './model/Line';
 import { addNewMessageToDb, getMessagesFromDb } from './db/Message/index';
 import { NewMessageType } from './model/Message';
@@ -33,27 +33,43 @@ app.use(cors());
 app.use(router);
 
 io.on('connection', async (socket: Socket) => {
-    console.log("Connected new user");
-
     socket.on("getMessages", async (roomName: string) => {
-        io.sockets.emit("messages", await getMessagesFromDb(roomName));
+        socket.emit("messages", await getMessagesFromDb(roomName));
+    });
+
+    socket.on("leaveRoom", async (roomName: string) => {
+        socket.leave(roomName);
+        console.log(`User leaved a room: ${roomName}!`);
+    });
+
+    socket.on("joinToRoom", async (roomName: string) => {
+        socket.join(roomName);
+        console.log(`User joined to room: ${roomName}!`);
     });
 
     socket.on("newMessage", async (msg: NewMessageType) => {
         await addNewMessageToDb(msg);
-        io.sockets.emit("messages", await getMessagesFromDb(msg.roomName));
+        socket.to(msg.roomName).emit("messages", await getMessagesFromDb(msg.roomName));
         console.log("Added new message to DB");
     });
 
     socket.on("newLine", async (line: LineType) => {
         await addNewLineToDb(line);
-        socket.broadcast.emit("drawNewLine", line);
+        socket.to(line.roomName).emit("drawNewLine", line);
     });
 
-    socket.on("clearLines", async (name: string) => {
-        await deleteUserLines(name);
-        io.sockets.emit("repaint", await getLines());
+    socket.on("clearLines", async (username: string, roomName: string) => {
+        await deleteUserLines(username, roomName);
+        socket.to(roomName).emit("repaint", await getLinesFromDb(roomName));
+        socket.emit("repaint", await getLinesFromDb(roomName));
         console.log("Delete lines");
+    });
+
+    socket.on("clearAllLines", async (roomName: string) => {
+        await deleteAllLines(roomName);
+        socket.to(roomName).emit("repaint", await getLinesFromDb(roomName));
+        socket.emit("repaint", await getLinesFromDb(roomName));
+        console.log(`Delete all lines from ${roomName} room!`);
     })
 
     socket.on("addRoom", async (room: Room) => {
@@ -65,9 +81,6 @@ io.on('connection', async (socket: Socket) => {
         await deleteRoomFromDb(room);
     });
 
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
 });
 
 server.listen(port, () => {

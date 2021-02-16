@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+import { Line } from "../model/line";
 import { Room } from "../model/room";
 import { User } from "../model/user";
 import { userLoginInput } from "./../model/user";
@@ -162,6 +163,28 @@ const deleteRoom = async (name: string): Promise<void> => {
     });
 };
 
+const getLines = async (roomName: string): Promise<Line[]> => {
+    return new Promise((resolve, reject) => {
+        axios
+            .get(API_SERVER_URL + "/line/" + roomName, {
+                headers: {
+                    Authorization: Cookies.get("token")
+                }
+            })
+            .then((res) => {
+                resolve(res.data);
+            })
+            .catch((err) => {
+                if (err.response) {
+                    console.log(err.response.data);
+                    reject(err.response.data.message);
+                } else {
+                    reject("Connection refused !");
+                }
+            });
+    });
+};
+
 export const apiProvider = {
     registerUser,
     loginUser,
@@ -169,5 +192,6 @@ export const apiProvider = {
     getRooms,
     roomExist,
     getUserRooms,
-    deleteRoom
+    deleteRoom,
+    getLines
 };

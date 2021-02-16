@@ -1,7 +1,7 @@
 import { LineSchema, LineType } from './../../model/Line';
 import mongoose from "mongoose";
 
-const Line = mongoose.model('Lines', LineSchema);
+const Line = mongoose.model<LineType>('Lines', LineSchema);
 
 export const addNewLineToDb = async (line: LineType): Promise<void> => {
     const newLine = new Line(line);
@@ -10,8 +10,8 @@ export const addNewLineToDb = async (line: LineType): Promise<void> => {
     });
 }
 
-export const deleteUserLines = async (username: string): Promise<void> => {
-    await Line.deleteMany({user: username}, {}, (err: any) => {
+export const deleteUserLines = async (username: string, roomName: string): Promise<void> => {
+    await Line.deleteMany({user: username, roomName}, {}, (err: any) => {
         if(err) console.log(err);
     });
 }
@@ -22,8 +22,8 @@ export const deleteAllLines = async (roomName: string): Promise<void> => {
     });
 }
 
-export const getLines = async (): Promise<any[]> => {
-    return await Line.find({}, (err) => {
+export const getLinesFromDb = async (roomName: string): Promise<LineType[]> => {
+    return await Line.find({roomName}, (err) => {
         if(err) console.log(err);
     });
 }

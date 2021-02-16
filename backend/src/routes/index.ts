@@ -1,3 +1,4 @@
+import { getLines } from './../controllers/lineController';
 import { getRooms, addNewRoom, deleteRoom, roomExist, getUserRooms } from './../controllers/roomController';
 import { register, login, getUsername } from './../controllers/userController';
 import express, { Router } from "express";
@@ -14,3 +15,4 @@ router.get('/room/:name', authMiddleware, roomExist);
 router.get('/room', authMiddleware, getRooms);
 router.post('/room', authMiddleware, validParams(["name"]), addNewRoom);
 router.delete('/room', authMiddleware, validParams(["name"]), deleteRoom);
+router.get('/line/:roomName', authMiddleware, getLines);

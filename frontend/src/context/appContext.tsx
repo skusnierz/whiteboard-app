@@ -30,6 +30,7 @@ type actionType =
     | { type: "SET_POINTER_SIZE"; pointerSize: number }
     | { type: "CLEAR_CANVAS" }
     | { type: "CLEAR_LINES" }
+    | { type: "CLEAR_ALL_LINES" }
     | { type: "LOGOUT" };
 
 type AppContextInterface = [AppStateInterface, React.Dispatch<actionType>];
@@ -108,11 +109,26 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             }
             return { ...state, canvasRef };
         case "CLEAR_LINES":
-            state.socket.emit("clearLines", state.sessionStorageContext.username);
+            state.socket.emit(
+                "clearLines",
+                state.sessionStorageContext.username,
+                state.sessionStorageContext.roomName
+            );
+            return state;
+        case "CLEAR_ALL_LINES":
+            state.socket.emit("clearAllLines", state.sessionStorageContext.roomName);
             return state;
         case "LOGOUT":
             sessionStorage.removeItem("APP_CONTEXT");
-            return { ...state, username: "", color: "black" };
+            return {
+                ...state,
+                sessionStorageContext: {
+                    username: "",
+                    color: "black",
+                    email: "",
+                    roomName: ""
+                }
+            };
         default:
             return state;
     }
