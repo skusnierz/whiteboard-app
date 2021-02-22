@@ -1,18 +1,18 @@
 import React, { MutableRefObject, useContext, useEffect, useRef, useState } from "react";
 
 import { Context } from "../../context/appContext";
-import { Line, Position } from "../../model/line";
+import { Line, Position } from "../../model/model";
 import { apiProvider } from "../../services/api";
-import "./canvas.scss";
+import { socketProvider } from "../../services/socket";
+import "./Canvas.scss";
 
 export function Canvas() {
     const [
         {
-            sessionStorageContext: { username, color, roomName },
+            sessionStorageData: { username, color, roomName },
             pointerSize,
             canvasRef,
-            contextRef,
-            socket
+            contextRef
         },
         dispatch
     ] = useContext(Context);
@@ -21,7 +21,7 @@ export function Canvas() {
     const [prevPosition, setPrevPosition] = useState<Position>({ x: 0, y: 0 });
 
     const sendNewLine = (line: Line) => {
-        socket.emit("newLine", line);
+        socketProvider.socket.emit("newLine", line);
     };
 
     const drawLine = (line: Line) => {
@@ -52,11 +52,11 @@ export function Canvas() {
             });
         });
 
-        socket.on("drawNewLine", (line: Line) => {
+        socketProvider.socket.on("drawNewLine", async (line: Line) => {
             drawLine(line);
         });
 
-        socket.on("repaint", (lines: Line[]) => {
+        socketProvider.socket.on("repaint", async (lines: Line[]) => {
             dispatch({ type: "CLEAR_CANVAS" });
             lines.forEach((line: Line) => {
                 drawLine(line);
@@ -69,6 +69,11 @@ export function Canvas() {
             context.lineWidth = pointerSize;
             contextRef.current = context;
         }
+
+        return () => {
+            socketProvider.socket.off("drawNewLine");
+            socketProvider.socket.off("repaint");
+        };
     }, [pointerSize, color, canvasRef, contextRef]);
 
     const startDrawing = ({ nativeEvent }: { nativeEvent: any }) => {
@@ -102,7 +107,6 @@ export function Canvas() {
                 pointerSize,
                 roomName
             };
-            // setLines([...lines, newLine]);
             drawLine(newLine);
             sendNewLine(newLine);
             setPrevPosition({ x: offsetX, y: offsetY });

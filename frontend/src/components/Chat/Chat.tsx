@@ -2,8 +2,9 @@ import React, { MutableRefObject, useContext, useEffect, useRef, useState } from
 import Moment from "react-moment";
 
 import { Context } from "../../context/appContext";
-import { Message } from "../../model/message";
-import "./chat.scss";
+import { Message } from "../../model/model";
+import { socketProvider } from "../../services/socket";
+import "./Chat.scss";
 
 interface ChatProps {
     messages: Message[];
@@ -13,8 +14,7 @@ interface ChatProps {
 export function Chat({ messages, setMessages }: ChatProps) {
     const [
         {
-            sessionStorageContext: { username, roomName },
-            socket
+            sessionStorageData: { username, roomName }
         }
     ] = useContext(Context);
     const [message, setMessage] = useState<string>("");
@@ -38,7 +38,7 @@ export function Chat({ messages, setMessages }: ChatProps) {
                 roomName
             }
         ]);
-        socket.emit("newMessage", {
+        socketProvider.socket.emit("newMessage", {
             author: username,
             date: new Date(),
             message,
@@ -49,18 +49,18 @@ export function Chat({ messages, setMessages }: ChatProps) {
 
     return (
         <>
-            <ul>
+            <ul className="ul">
                 {messages.map((message, idx: number) =>
                     idx !== messages.length ? (
-                        <li ref={lastMessageRef} key={idx}>
-                            <p>
+                        <li ref={lastMessageRef} key={idx} className="ul__li">
+                            <p className="ul__li--title">
                                 {message.author} <Moment date={message.date} format="HH:mm:ss" />
                             </p>
                             {message.message}
                         </li>
                     ) : (
-                        <li>
-                            <p>
+                        <li className="ul__li">
+                            <p className="ul__li--title">
                                 {message.author} <Moment date={message.date} format="HH:mm:ss" />
                             </p>
                             {message.message}

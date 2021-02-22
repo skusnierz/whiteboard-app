@@ -1,23 +1,23 @@
-import { NewMessageType } from '../../model/Message';
+import { MessageType, NewMessageType } from '../../model/Message';
 import mongoose from "mongoose";
 import {MessageSchema} from "../../model/Message";
+import { errorCb } from "../../utils/error";
 
-const Message = mongoose.model('Messages', MessageSchema);
-export const getMessagesFromDb = (roomName: string) => {
-    return Message.find({roomName})
-        .then(messages => messages)
-        .catch(err => console.log(err));
+const Message = mongoose.model<MessageType>('Messages', MessageSchema);
+
+export const getMessagesFromDb = async (roomName: string): Promise<MessageType[]>  => {
+    return await Message.find({roomName}, {}, {}, errorCb);
 };
 
-export const addNewMessageToDb = (message: NewMessageType) => {
+export const addNewMessageToDb = async (message: NewMessageType): Promise<void> => {
     const newMessage = new Message({
         ...message,
         date: new Date(),
     });
 
-    newMessage.save();
+    await newMessage.save();
 };
 
-export const deleteMessages = async (roomName: string) => {
-    await Message.deleteMany({roomName});
+export const deleteMessages = async (roomName: string): Promise<void> => {
+    await Message.deleteMany({roomName}, {}, errorCb);
 }

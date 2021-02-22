@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
 export const MessageSchema = new Schema({
     author: String,
@@ -7,11 +7,11 @@ export const MessageSchema = new Schema({
     roomName: String,
 });
 
-export interface Message {
+export interface MessageType extends Document {
     author: string;
     date: Date;
     message: string;
     roomName: string
 };
 
-export type NewMessageType = Omit<Message, "date">;
+export type NewMessageType = Omit<MessageType, "date">;

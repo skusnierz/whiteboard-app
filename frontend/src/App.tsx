@@ -11,7 +11,7 @@ import { Context } from "./context/appContext";
 function App() {
     const [
         {
-            sessionStorageContext: { username }
+            sessionStorageData: { username }
         }
     ] = useContext(Context);
 

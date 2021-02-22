@@ -1,5 +1,4 @@
 import React, { MutableRefObject, ReactElement, useReducer, useRef } from "react";
-import { Socket } from "socket.io-client";
 
 import { socketProvider } from "../services/socket";
 
@@ -15,11 +14,10 @@ interface SessionStorageContext {
 }
 
 interface AppStateInterface {
-    sessionStorageContext: SessionStorageContext;
+    sessionStorageData: SessionStorageContext;
     pointerSize: number;
     canvasRef: MutableRefObject<HTMLCanvasElement>;
     contextRef: MutableRefObject<CanvasRenderingContext2D>;
-    socket: Socket;
 }
 
 type actionType =
@@ -41,14 +39,14 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    ...state.sessionStorageContext,
+                    ...state.sessionStorageData,
                     username: action.username
                 })
             );
             return {
                 ...state,
-                sessionStorageContext: {
-                    ...state.sessionStorageContext,
+                sessionStorageData: {
+                    ...state.sessionStorageData,
                     username: action.username
                 }
             };
@@ -56,14 +54,14 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    ...state.sessionStorageContext,
+                    ...state.sessionStorageData,
                     roomName: action.roomName
                 })
             );
             return {
                 ...state,
-                sessionStorageContext: {
-                    ...state.sessionStorageContext,
+                sessionStorageData: {
+                    ...state.sessionStorageData,
                     roomName: action.roomName
                 }
             };
@@ -71,14 +69,14 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    ...state.sessionStorageContext,
+                    ...state.sessionStorageData,
                     email: action.email
                 })
             );
             return {
                 ...state,
-                sessionStorageContext: {
-                    ...state.sessionStorageContext,
+                sessionStorageData: {
+                    ...state.sessionStorageData,
                     email: action.email
                 }
             };
@@ -86,14 +84,14 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             sessionStorage.setItem(
                 "APP_CONTEXT",
                 JSON.stringify({
-                    ...state.sessionStorageContext,
+                    ...state.sessionStorageData,
                     color: action.color
                 })
             );
             return {
                 ...state,
-                sessionStorageContext: {
-                    ...state.sessionStorageContext,
+                sessionStorageData: {
+                    ...state.sessionStorageData,
                     color: action.color
                 }
             };
@@ -109,20 +107,20 @@ const reducer = (state: AppStateInterface, action: actionType) => {
             }
             return { ...state, canvasRef };
         case "CLEAR_LINES":
-            state.socket.emit(
+            socketProvider.socket.emit(
                 "clearLines",
-                state.sessionStorageContext.username,
-                state.sessionStorageContext.roomName
+                state.sessionStorageData.username,
+                state.sessionStorageData.roomName
             );
             return state;
         case "CLEAR_ALL_LINES":
-            state.socket.emit("clearAllLines", state.sessionStorageContext.roomName);
+            socketProvider.socket.emit("clearAllLines", state.sessionStorageData.roomName);
             return state;
         case "LOGOUT":
             sessionStorage.removeItem("APP_CONTEXT");
             return {
                 ...state,
-                sessionStorageContext: {
+                sessionStorageData: {
                     username: "",
                     color: "black",
                     email: "",
@@ -136,7 +134,7 @@ const reducer = (state: AppStateInterface, action: actionType) => {
 
 let appInitialContext = {} as AppStateInterface;
 
-appInitialContext.sessionStorageContext = JSON.parse(
+appInitialContext.sessionStorageData = JSON.parse(
     sessionStorage.getItem("APP_CONTEXT") as string
 ) || {
     username: "",
@@ -145,7 +143,6 @@ appInitialContext.sessionStorageContext = JSON.parse(
     roomName: ""
 };
 appInitialContext.pointerSize = 1;
-appInitialContext.socket = socketProvider.socket;
 
 export const Context = React.createContext<AppContextInterface>([appInitialContext, () => null]);
 

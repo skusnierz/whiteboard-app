@@ -15,8 +15,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 
 import { Context } from "../../context/appContext";
-import { Room } from "../../model/room";
+import { Room } from "../../model/model";
 import { apiProvider } from "../../services/api";
+import { socketProvider } from "../../services/socket";
 import { Navbar } from "../Navbar/Navbar";
 import { NewRoomDialog } from "./NewRoomDialog";
 
@@ -48,27 +49,27 @@ const useStyles = makeStyles({
 });
 
 export function RoomList() {
-    const [{ socket }, dispatch] = useContext(Context);
+    const [, dispatch] = useContext(Context);
     const [rooms, setRooms] = useState<Room[]>([]);
     const [openDialog, setOpenDialog] = useState(false);
     const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
     const history = useHistory();
 
     useEffect(() => {
-        socket.on("newRoom", (room: Room) => {
+        socketProvider.socket.on("newRoom", (room: Room) => {
             setRooms([...rooms, room]);
         });
-    }, [rooms, socket]);
+
+        return () => {
+            socketProvider.socket.off("newRoom");
+        };
+    }, [rooms]);
 
     useEffect(() => {
-        const getRooms = async () => {
-            apiProvider
-                .getRooms()
-                .then((rooms) => setRooms(rooms))
-                .catch((err) => setAprErrorMessage(err));
-        };
-
-        getRooms();
+        apiProvider
+            .getRooms()
+            .then((rooms) => setRooms(rooms))
+            .catch((err) => setAprErrorMessage(err));
     }, []);
 
     const classes = useStyles();

@@ -1,35 +1,39 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { Context } from "../../context/appContext";
-import { Message } from "../../model/message";
+import { Message } from "../../model/model";
+import { socketProvider } from "../../services/socket";
 import { Canvas } from "../Canvas/Canvas";
 import { Chat } from "../Chat/Chat";
 import { Navbar } from "../Navbar/Navbar";
 import { Toolbox } from "../Toolbox/Toolbox";
-import "./whiteboard.scss";
+import "./Whiteboard.scss";
 
 export function WhiteBoard() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [
         {
-            sessionStorageContext: { roomName },
-            socket
+            sessionStorageData: { roomName }
         }
     ] = useContext(Context);
     useEffect(() => {
-        socket.on("messages", (messages: Message[]) => {
+        socketProvider.socket.on("messages", (messages: Message[]) => {
             setMessages(messages);
         });
+
+        return () => {
+            socketProvider.socket.off("messages");
+        };
     });
 
     useEffect(() => {
-        socket.emit("joinToRoom", roomName);
-        socket.emit("getMessages", roomName);
+        socketProvider.socket.emit("joinRoom", roomName);
+        socketProvider.socket.emit("getMessages", roomName);
 
         return () => {
-            socket.emit("leaveRoom", roomName);
+            socketProvider.socket.emit("leaveRoom", roomName);
         };
-    }, [socket, roomName]);
+    }, [roomName]);
 
     return (
         <>

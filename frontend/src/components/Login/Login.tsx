@@ -9,7 +9,7 @@ import { Context } from "../../context/appContext";
 import { apiProvider } from "../../services/api";
 import { errorMessage } from "../../utils/errorMessage";
 import { Input } from "./Input";
-import "./login.scss";
+import "./Login.scss";
 
 const useStyles = makeStyles({
     container: {
@@ -17,13 +17,6 @@ const useStyles = makeStyles({
         height: "100%",
         overflow: "hidden",
         background: "linear-gradient(to right, #011f4b, #2a9df4)"
-    },
-
-    header: {
-        fontSize: "20px",
-        textAlign: "center",
-        marginBottom: 10,
-        fontWeight: 600
     },
 
     button: {
@@ -60,7 +53,7 @@ export function Login() {
     const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
     const [, dispatch] = useContext(Context);
 
-    const signIn = ({ email, password }: FormData) => {
+    const signIn = async ({ email, password }: FormData) => {
         apiProvider
             .loginUser({ email, password })
             .then(async (username) => {
@@ -75,7 +68,7 @@ export function Login() {
         <div className={classes.container}>
             <Paper className="paper" elevation={5}>
                 <div>
-                    <Typography className={classes.header}>Sing In </Typography>
+                    <h1 className="header--h1">Sing In </h1>
                     <LockIcon color="primary" />
                 </div>
                 <form className="form" onSubmit={handleSubmit(signIn)}>

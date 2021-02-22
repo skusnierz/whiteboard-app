@@ -7,12 +7,12 @@ import { validParams } from '../middlewares/paramsValidation';
 
 export const router: Router = express.Router();
 
-router.post('/user', validParams(["email", "password", "username"]), register);
-router.post('/user/login', validParams(["email", "password"]), login);
-router.get('/user', authMiddleware, validParams(["email"]), getUsername);
-router.get('/rooms', authMiddleware, getUserRooms);
-router.get('/room/:name', authMiddleware, roomExist);
-router.get('/room', authMiddleware, getRooms);
-router.post('/room', authMiddleware, validParams(["name"]), addNewRoom);
+router.post('/users', validParams(["email", "password", "username"]), register);
+router.post('/users/login', validParams(["email", "password"]), login);
+router.get('/users', authMiddleware, validParams(["email"]), getUsername);
+router.get('/room', authMiddleware, getUserRooms);
+router.get('/rooms/:name', authMiddleware, roomExist);
+router.get('/rooms', authMiddleware, getRooms);
+router.post('/rooms', authMiddleware, validParams(["name"]), addNewRoom);
 router.delete('/room', authMiddleware, validParams(["name"]), deleteRoom);
-router.get('/line/:roomName', authMiddleware, getLines);
+router.get('/lines/:roomName', authMiddleware, getLines);

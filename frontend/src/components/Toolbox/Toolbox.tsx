@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import { Context } from "../../context/appContext";
-import "./toolbox.scss";
+import "./Toolbox.scss";
 
 const colorers: string[] = [
     "black",

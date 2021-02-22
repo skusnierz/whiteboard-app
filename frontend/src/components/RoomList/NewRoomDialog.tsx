@@ -13,6 +13,7 @@ import React, { useContext, useState } from "react";
 
 import { Context } from "../../context/appContext";
 import { apiProvider } from "../../services/api";
+import { socketProvider } from "../../services/socket";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -98,8 +99,7 @@ interface NewRoomDialogProps {
 export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
     const [
         {
-            sessionStorageContext: { username, email },
-            socket
+            sessionStorageData: { username, email }
         }
     ] = useContext(Context);
     const [roomName, setRoomName] = useState("");
@@ -107,13 +107,14 @@ export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
     const [apiErrorMessage, setApiErrorMessage] = useState("");
     const classes = useStyles();
 
-    const setInitialValue = () => {
+    const resetValue = () => {
         setOpen(false);
         setRoomName("");
         setSubmit(false);
         setApiErrorMessage("");
     };
-    const onSubmit = () => {
+
+    const onSubmit = async () => {
         setSubmit(true);
         roomName !== "" &&
             apiProvider
@@ -122,12 +123,12 @@ export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
                     if (res) {
                         setApiErrorMessage("Room already exist");
                     } else {
-                        socket.emit("addRoom", {
+                        socketProvider.socket.emit("addRoom", {
                             name: roomName,
                             email,
                             username
                         });
-                        setInitialValue();
+                        resetValue();
                     }
                 })
                 .catch((err) => setApiErrorMessage(err));
@@ -177,7 +178,7 @@ export function NewRoomDialog({ open, setOpen }: NewRoomDialogProps) {
                     variant="contained">
                     Add
                 </Button>
-                <Button autoFocus onClick={setInitialValue} variant="contained" color="secondary">
+                <Button autoFocus onClick={resetValue} variant="contained" color="secondary">
                     Cancel
                 </Button>
             </DialogActions>

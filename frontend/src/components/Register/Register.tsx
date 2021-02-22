@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 import { apiProvider } from "../../services/api";
 import { errorMessage } from "../../utils/errorMessage";
 import { Input } from "../Login/Input";
-import "./register.scss";
+import "./Register.scss";
 
 const useStyles = makeStyles({
     container: {

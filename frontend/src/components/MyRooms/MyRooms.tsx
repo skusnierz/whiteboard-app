@@ -13,7 +13,7 @@ import { Alert } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
-import { Room } from "../../model/room";
+import { Room } from "../../model/model";
 import { apiProvider } from "../../services/api";
 import { Navbar } from "../Navbar/Navbar";
 
@@ -41,14 +41,10 @@ export function MyRooms() {
     const [apiErrorMessage, setAprErrorMessage] = useState<string>("");
 
     useEffect(() => {
-        const getRooms = async () => {
-            apiProvider
-                .getUserRooms()
-                .then((rooms) => setRooms(rooms))
-                .catch((err) => setAprErrorMessage(err));
-        };
-
-        getRooms();
+        apiProvider
+            .getUserRooms()
+            .then((rooms) => setRooms(rooms))
+            .catch((err) => setAprErrorMessage(err));
     }, []);
 
     return (
